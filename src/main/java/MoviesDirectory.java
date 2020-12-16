@@ -6,13 +6,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MoviesDirectory {
-    public MoviesDirectory(String Name){
-        this.name=Name;
+    public MoviesDirectory(String FolderName){
+        this.folderName=FolderName;
     }
-    private final String name;
+    private final String folderName;
 
-    public void moveFile() {
-        File directory = new File(name+"MD");
+    public void moveFileNUpload() {
+        File directory = new File(folderName);
 
         Runnable fileCheck = () -> {
             System.out.println(directory.toPath().toString());
@@ -22,8 +22,8 @@ public class MoviesDirectory {
                     for (String file:files) {
                         System.out.println("leci plik");
                         try {
-                            if(GDriveUpload.DriveUpload(file, name + "MD/"+ file)){
-                                File movie = new File(name + "MD/"+ file);
+                            if(GDriveUpload.DriveUpload(file, folderName)){
+                                File movie = new File(folderName + "/"+ file);
                                 movie.delete();
                             }
                         } catch (GeneralSecurityException | IOException e) {
@@ -35,5 +35,25 @@ public class MoviesDirectory {
         };
         ScheduledExecutorService fileCheckTimer = Executors.newSingleThreadScheduledExecutor();
         fileCheckTimer.scheduleWithFixedDelay(fileCheck, 0, 5, TimeUnit.MINUTES);
+    }
+
+    public void moveLeftOverNUpload(){
+        File directory = new File(folderName);
+        if(directory.exists()) {
+            String[] files = directory.list();
+            if(files != null){
+                for (String file:files) {
+                    System.out.println("leci plik");
+                    try {
+                        if(GDriveUpload.DriveUpload(file, folderName)){
+                            File movie = new File(folderName + "/"+ file);
+                            movie.delete();
+                        }
+                    } catch (GeneralSecurityException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

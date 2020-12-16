@@ -59,28 +59,37 @@ public class GDriveUpload {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static boolean DriveUpload(String fileName, String path) throws GeneralSecurityException, IOException {
+    public static boolean DriveUpload(String fileName, String folderName) throws GeneralSecurityException, IOException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
+        String folderID;
+
         Drive.Files.List request=service.files().list().setQ(
-                "mimeType='application/vnd.google-apps.folder' and trashed=false and name='"+folderName+"'");
+                "mimeType='application/vnd.google-apps.folder' and trashed=false and name='" + folderName + "'");
         FileList files = request.execute();
 
-        File fileMetadata = new File();
-        fileMetadata.setName(folderName);
-        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+        if(files.isEmpty()){
+            File folderMetadata = new File();
+            folderMetadata.setName(folderName);
+            folderMetadata.setMimeType("application/vnd.google-apps.folder");
 
-        File file = service.files().create(fileMetadata)
-                .setFields("id")
-                .execute();
+            File folder = service.files().create(folderMetadata)
+                    .setFields("id")
+                    .execute();
+            folderID = folder.getId();
+        }
+        else{
+            folderID = files.getFiles().get(0).getId();
+        }
 
         File fileMetadata = new File();
         fileMetadata.setName(fileName);
-        java.io.File filePath = new java.io.File(path);
+        fileMetadata.setParents(Collections.singletonList(folderID));
+        java.io.File filePath = new java.io.File(folderName + "/"+ fileName);
         FileContent mediaContent = new FileContent("", filePath);
         File file = service.files().create(fileMetadata, mediaContent)
                 .setFields("id")
