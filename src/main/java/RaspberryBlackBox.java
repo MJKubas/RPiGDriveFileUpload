@@ -15,7 +15,7 @@ public class RaspberryBlackBox {
         for (String file:files){
             if(file.contains("MD")&&!file.contains(".avi")){
                 MoviesDirectory cameraLeftOver = new MoviesDirectory(file);
-                cameraLeftOver.moveLeftOverNUpload();
+                cameraLeftOver.leftOverUpload();
             }
         }
 
@@ -34,7 +34,7 @@ public class RaspberryBlackBox {
                     for (String stream : load){
                         String[] split =  stream.split(">");
                         MoviesDirectory camera = new MoviesDirectory(split[1]+"MD");
-                        camera.moveFileNUpload();
+                        camera.filesUpload();
                     }
                 }
             }while(!loaded);

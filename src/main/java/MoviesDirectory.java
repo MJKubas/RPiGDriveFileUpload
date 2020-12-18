@@ -11,7 +11,7 @@ public class MoviesDirectory {
     }
     private final String folderName;
 
-    public void moveFileNUpload() {
+    public void filesUpload() {
         File directory = new File(folderName);
 
         Runnable fileCheck = () -> {
@@ -37,7 +37,7 @@ public class MoviesDirectory {
         fileCheckTimer.scheduleWithFixedDelay(fileCheck, 0, 5, TimeUnit.MINUTES);
     }
 
-    public void moveLeftOverNUpload(){
+    public void leftOverUpload(){
         File directory = new File(folderName);
         if(directory.exists()) {
             String[] files = directory.list();

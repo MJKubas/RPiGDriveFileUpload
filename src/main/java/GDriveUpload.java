@@ -72,7 +72,7 @@ public class GDriveUpload {
                 "mimeType='application/vnd.google-apps.folder' and trashed=false and name='" + folderName + "'");
         FileList files = request.execute();
 
-        if(files.isEmpty()){
+        if(files.getFiles().isEmpty()){
             File folderMetadata = new File();
             folderMetadata.setName(folderName);
             folderMetadata.setMimeType("application/vnd.google-apps.folder");
